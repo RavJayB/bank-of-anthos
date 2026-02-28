@@ -4,6 +4,10 @@
 
 Use the default instructions in the [README](/README.md). When Workload Identity is enabled, use the [Workload Identity instructions](/docs/workload-identity.md).
 
+## AWS EKS
+
+A ready-to-use Kustomize overlay is provided in [`extras/eks/`](/extras/eks). It removes the GKE-specific Workload Identity annotation from the `ServiceAccount` and disables Google Cloud telemetry so that no GCP credentials are required. See the [EKS deployment instructions](/extras/eks/README.md) for full details.
+
 ## Non-GKE Kubernetes Clusters
 
 Bank of Anthos was designed to work on any Kubernetes cluster and has no GCP-specific requirements except for Google Cloud Operations instrumentation - the source code of Bank of Anthos will try to export logs, metrics, and traces to GCP by default. This requires authentication to a GCP project - in GKE, this authentication (`GOOGLE_APPLICATION_CREDENTIALS`) [is inferred](https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#authenticating_with_service_accounts) from the Node's Compute Engine instance service account (or, if Workload identity is enabled, from a separate service account). In a non GKE cluster, you have to mount those GCP credentials into your Pods directly.
