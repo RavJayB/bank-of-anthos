@@ -122,6 +122,7 @@ The following button opens up an interactive tutorial showing how to deploy Bank
 
 ## Additional deployment options
 
+- **AWS EKS**: [See these instructions](/extras/eks) to deploy on Amazon Elastic Kubernetes Service.
 - **Workload Identity**: [See these instructions.](/docs/workload-identity.md)
 - **Cloud SQL**: [See these instructions](/extras/cloudsql) to replace the in-cluster databases with hosted Google Cloud SQL.
 - **Multi Cluster with Cloud SQL**: [See these instructions](/extras/cloudsql-multicluster) to replicate the app across two regions using GKE, Multi Cluster Ingress, and Google Cloud SQL.
