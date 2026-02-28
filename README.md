@@ -120,9 +120,75 @@ The following button opens up an interactive tutorial showing how to deploy Bank
 
    Deleting the cluster may take a few minutes.
 
+## Quickstart (EKS)
+
+1. Ensure you have the following requirements:
+   - An EKS cluster (1.24+) with `kubectl` configured to access it.
+     Use [eksctl](https://eksctl.io/) or the [AWS Console](https://console.aws.amazon.com/eks/) to create one.
+   - Shell environment with `aws`, `git`, `kubectl`, and `kustomize` (or `kubectl` v1.14+).
+
+2. Clone the repository.
+
+   ```sh
+   git clone https://github.com/GoogleCloudPlatform/bank-of-anthos
+   cd bank-of-anthos/
+   ```
+
+3. Configure `kubectl` to target your EKS cluster.
+
+   ```sh
+   aws eks update-kubeconfig --region <REGION> --name <CLUSTER_NAME>
+   ```
+
+   Substitute `<REGION>` and `<CLUSTER_NAME>` with your cluster's AWS region and name.
+
+4. Deploy Bank of Anthos to the cluster using the EKS Kustomize overlay.
+
+   ```sh
+   kubectl apply -f ./extras/jwt/jwt-secret.yaml
+   kubectl apply -k ./extras/eks
+   ```
+
+5. Wait for the pods to be ready.
+
+   ```sh
+   kubectl get pods
+   ```
+
+   After a few minutes, you should see the Pods in a `Running` state:
+
+   ```
+   NAME                                  READY   STATUS    RESTARTS   AGE
+   accounts-db-6f589464bc-6r7b7          1/1     Running   0          99s
+   balancereader-797bf6d7c5-8xvp6        1/1     Running   0          99s
+   contacts-769c4fb556-25pg2             1/1     Running   0          98s
+   frontend-7c96b54f6b-zkdbz             1/1     Running   0          98s
+   ledger-db-5b78474d4f-p6xcb            1/1     Running   0          98s
+   ledgerwriter-84bf44b95d-65mqf         1/1     Running   0          97s
+   loadgenerator-559667b6ff-4zsvb        1/1     Running   0          97s
+   transactionhistory-5569754896-z94cn   1/1     Running   0          97s
+   userservice-78dc876bff-pdhtl          1/1     Running   0          96s
+   ```
+
+6. Access the web frontend in a browser using the frontend's external IP.
+
+   ```sh
+   kubectl get service frontend | awk '{print $4}'
+   ```
+
+   Visit `http://EXTERNAL_IP` in a web browser to access your instance of Bank of Anthos.
+   AWS provisions an Elastic Load Balancer for the `frontend` service; DNS propagation may take a minute or two.
+
+7. Once you are done with it, delete the deployed resources.
+
+   ```sh
+   kubectl delete -k ./extras/eks
+   kubectl delete -f ./extras/jwt/jwt-secret.yaml
+   ```
+
 ## Additional deployment options
 
-- **AWS EKS**: [See these instructions](/extras/eks) to deploy on Amazon Elastic Kubernetes Service.
+- **AWS EKS**: [See these instructions](/extras/eks) for more details on the EKS deployment, including optional Network Load Balancer and IRSA configuration.
 - **Workload Identity**: [See these instructions.](/docs/workload-identity.md)
 - **Cloud SQL**: [See these instructions](/extras/cloudsql) to replace the in-cluster databases with hosted Google Cloud SQL.
 - **Multi Cluster with Cloud SQL**: [See these instructions](/extras/cloudsql-multicluster) to replicate the app across two regions using GKE, Multi Cluster Ingress, and Google Cloud SQL.
